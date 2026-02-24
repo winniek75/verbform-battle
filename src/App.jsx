@@ -332,7 +332,8 @@ export default function App() {
     const correctType = q.type === "BOTH_TO" ? "TO" : q.type === "BOTH_ING" ? "ING" : q.type;
     const toOpt  = { label: toForm, type:"TO",  hint: isBoth ? (q.type === "BOTH_TO"  ? q.bothLabel : "別の意味") : null };
     const ingOpt = { label: ing,    type:"ING", hint: isBoth ? (q.type === "BOTH_ING" ? q.bothLabel : "別の意味") : null };
-    return correctType === "TO" ? [toOpt, ingOpt] : [ingOpt, toOpt];
+    // Randomize left/right position each time
+    return Math.random() < 0.5 ? [toOpt, ingOpt] : [ingOpt, toOpt];
   }
 
   const startGame = (modeKey, retryWrong = false) => {
@@ -378,7 +379,7 @@ export default function App() {
     setCombo(0); comboRef.current = 0;
     setWrongIds(w => w.includes(curQ.id) ? w : [...w, curQ.id]);
     spawnParticles(false);
-    advRef.current = setTimeout(advance, 1900);
+    // Timeout → wait for user to press 次へ (no auto-advance)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curQ, advance]);
 
@@ -410,11 +411,13 @@ export default function App() {
       comboRef.current = nc;
       setCombo(nc); setMaxCombo(mc => Math.max(mc, nc));
       setScore(s => s + pts);
+      // Correct → auto-advance after short delay
+      advRef.current = setTimeout(advance, 1400);
     } else {
       comboRef.current = 0; setCombo(0);
       setWrongIds(w => w.includes(curQ.id) ? w : [...w, curQ.id]);
+      // Wrong → wait for user to press 次へ (no auto-advance)
     }
-    advRef.current = setTimeout(advance, 1900);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answered, curQ, hasTimer, advance]);
 
@@ -447,6 +450,7 @@ export default function App() {
           timeLeft={timeLeft} hasTimer={hasTimer} cfg={cfg}
           particles={particles} qKey={qKey}
           onAnswer={handleAnswer}
+          onAdvance={advance}
           onBack={() => { clearInterval(timerRef.current); clearTimeout(advRef.current); setScreen("home"); }}
         />
       )}
@@ -629,7 +633,7 @@ function RBox({ color, title, rows, sub }) {
 }
 
 // ─── PLAY SCREEN ─────────────────────────────────────────
-function PlayScreen({ q, qIdx, total, opts, answered, score, combo, timeLeft, hasTimer, cfg, particles, qKey, onAnswer, onBack }) {
+function PlayScreen({ q, qIdx, total, opts, answered, score, combo, timeLeft, hasTimer, cfg, particles, qKey, onAnswer, onAdvance, onBack }) {
   const correctType = q.type === "BOTH_TO" ? "TO" : q.type === "BOTH_ING" ? "ING" : q.type;
   const isBoth      = q.type.startsWith("BOTH");
   const progPct     = (qIdx / total) * 100;
@@ -751,6 +755,23 @@ function PlayScreen({ q, qIdx, total, opts, answered, score, combo, timeLeft, ha
             {answered.timeout ? "⏱ TIME'S UP!" : answered.correct ? `✓ CORRECT!${combo >= 3 ? ` — ${combo}x COMBO` : ""}` : "✗ INCORRECT"}
           </div>
           <div style={{ fontSize:12, color:"#777", lineHeight:1.8, fontFamily:"Noto Sans JP", whiteSpace:"pre-line" }}>{q.ex}</div>
+          {/* Show 次へ button only on wrong/timeout — correct auto-advances */}
+          {!answered.correct && (
+            <button
+              className="btn"
+              onClick={onAdvance}
+              style={{
+                marginTop:14, width:"100%", padding:"12px",
+                borderRadius:10, border:"none",
+                background:"linear-gradient(135deg,#ef4444,#f97316)",
+                color:"#fff", fontSize:14, fontWeight:800,
+                letterSpacing:1, cursor:"pointer",
+                display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+              }}
+            >
+              理解した　→　次の問題へ
+            </button>
+          )}
         </div>
       )}
     </div>
