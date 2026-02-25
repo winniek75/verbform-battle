@@ -407,9 +407,9 @@ export default function App() {
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US'; // アメリカ英語
-      utterance.rate = 0.9; // 話速
+      utterance.rate = 0.85; // 話速を少し遅くしてはっきりと
       utterance.pitch = 1.0; // ピッチ
-      utterance.volume = 0.8; // 音量
+      utterance.volume = 0.9; // 音量を少し上げる
 
       // 利用可能な音声を取得して、ネイティブっぽい音声を選択
       const voices = window.speechSynthesis.getVoices();
@@ -445,8 +445,10 @@ export default function App() {
       comboRef.current = nc;
       setCombo(nc); setMaxCombo(mc => Math.max(mc, nc));
       setScore(s => s + pts);
-      // Correct → auto-advance after short delay
-      advRef.current = setTimeout(advance, 1400);
+      // Correct → auto-advance after longer delay to allow speech to complete
+      // 文章の長さに応じて待機時間を調整（最低3秒、文字数×60ms）
+      const speechDuration = Math.max(3000, completeSentence.length * 60);
+      advRef.current = setTimeout(advance, speechDuration);
     } else {
       comboRef.current = 0; setCombo(0);
       setWrongIds(w => w.includes(curQ.id) ? w : [...w, curQ.id]);
