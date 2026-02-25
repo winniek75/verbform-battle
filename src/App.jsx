@@ -312,6 +312,9 @@ export default function App() {
   const cfg  = activeMode ? MODES[activeMode] : null;
   const hasTimer = !!cfg?.time;
 
+  // 問題ごとのランダム配置を保持するためのMap
+  const optsOrderRef = useRef(new Map());
+
   function buildOpts(q) {
     if (!q) return [];
     const blank   = q.blank;
@@ -332,8 +335,15 @@ export default function App() {
     const correctType = q.type === "BOTH_TO" ? "TO" : q.type === "BOTH_ING" ? "ING" : q.type;
     const toOpt  = { label: toForm, type:"TO",  hint: isBoth ? (q.type === "BOTH_TO"  ? q.bothLabel : "別の意味") : null };
     const ingOpt = { label: ing,    type:"ING", hint: isBoth ? (q.type === "BOTH_ING" ? q.bothLabel : "別の意味") : null };
-    // Randomize left/right position each time
-    return Math.random() < 0.5 ? [toOpt, ingOpt] : [ingOpt, toOpt];
+
+    // 問題IDに基づいて配置順を決定（一度決めたら変更しない）
+    const qKey = `${q.id}-${qIdx}`;
+    if (!optsOrderRef.current.has(qKey)) {
+      optsOrderRef.current.set(qKey, Math.random() < 0.5);
+    }
+    const showToFirst = optsOrderRef.current.get(qKey);
+
+    return showToFirst ? [toOpt, ingOpt] : [ingOpt, toOpt];
   }
 
   const startGame = (modeKey, retryWrong = false) => {
@@ -347,6 +357,7 @@ export default function App() {
     setWrongIds([]); setParticles([]); setAnswered(null);
     setQKey(k => k + 1); setTimeLeft(c.time ?? 12);
     comboRef.current = 0; timeLRef.current = c.time ?? 12;
+    optsOrderRef.current.clear(); // ランダム配置をリセット
     optsRef.current = buildOpts(pool[0]);
     setScreen("play");
   };
