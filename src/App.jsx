@@ -315,7 +315,7 @@ export default function App() {
   // 問題ごとのランダム配置を保持するためのMap
   const optsOrderRef = useRef(new Map());
 
-  function buildOpts(q) {
+  function buildOpts(q, idx) {
     if (!q) return [];
     const blank   = q.blank;
     const isTO    = blank.startsWith("to ");
@@ -336,8 +336,8 @@ export default function App() {
     const toOpt  = { label: toForm, type:"TO",  hint: isBoth ? (q.type === "BOTH_TO"  ? q.bothLabel : "別の意味") : null };
     const ingOpt = { label: ing,    type:"ING", hint: isBoth ? (q.type === "BOTH_ING" ? q.bothLabel : "別の意味") : null };
 
-    // 問題IDに基づいて配置順を決定（一度決めたら変更しない）
-    const qKey = `${q.id}-${qIdx}`;
+    // 問題IDとインデックスに基づいて配置順を決定（一度決めたら変更しない）
+    const qKey = `${q.id}-${idx}`;
     if (!optsOrderRef.current.has(qKey)) {
       optsOrderRef.current.set(qKey, Math.random() < 0.5);
     }
@@ -358,7 +358,7 @@ export default function App() {
     setQKey(k => k + 1); setTimeLeft(c.time ?? 12);
     comboRef.current = 0; timeLRef.current = c.time ?? 12;
     optsOrderRef.current.clear(); // ランダム配置をリセット
-    optsRef.current = buildOpts(pool[0]);
+    optsRef.current = buildOpts(pool[0], 0);
     setScreen("play");
   };
 
@@ -370,7 +370,7 @@ export default function App() {
     const next = qIdx + 1;
     if (next >= questions.length) { setScreen("result"); return; }
     setAnswered(null); setQIdx(next); setQKey(k => k + 1);
-    optsRef.current = buildOpts(questions[next]);
+    optsRef.current = buildOpts(questions[next], next);
   }, [qIdx, questions]);
 
   // timer effect
@@ -488,7 +488,8 @@ export default function App() {
       window.speechSynthesis.cancel();
     }
   }, []);
-  useEffect(() => { if (curQ) optsRef.current = buildOpts(curQ); }, [qIdx, questions]); // eslint-disable-line
+  // buildOptsは既にstartGameとadvanceで呼ばれているので、ここでは不要
+  // useEffect(() => { if (curQ) optsRef.current = buildOpts(curQ); }, [qIdx, questions]); // eslint-disable-line
 
   useEffect(() => {
     if (screen === "result" && activeMode) {
@@ -500,7 +501,7 @@ export default function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen]);
 
-  const opts = optsRef.current.length === 2 ? optsRef.current : (curQ ? buildOpts(curQ) : []);
+  const opts = optsRef.current.length === 2 ? optsRef.current : (curQ ? buildOpts(curQ, qIdx) : []);
 
   return (
     <div style={{ minHeight:"100vh", background:"#060810", fontFamily:"'Sora','Noto Sans JP',sans-serif", position:"relative", overflowX:"hidden" }}>
