@@ -339,11 +339,18 @@ export default function App() {
     // 問題IDとインデックスに基づいて配置順を決定（一度決めたら変更しない）
     const qKey = `${q.id}-${idx}`;
     if (!optsOrderRef.current.has(qKey)) {
-      optsOrderRef.current.set(qKey, Math.random() < 0.5);
+      // 完全にランダムに正解の位置を決める（50%の確率で左か右）
+      const putCorrectOnLeft = Math.random() < 0.5;
+      optsOrderRef.current.set(qKey, putCorrectOnLeft);
     }
-    const showToFirst = optsOrderRef.current.get(qKey);
+    const putCorrectOnLeft = optsOrderRef.current.get(qKey);
 
-    return showToFirst ? [toOpt, ingOpt] : [ingOpt, toOpt];
+    // 正解を左に置くか右に置くかを決定
+    const options = [toOpt, ingOpt];
+    const correctOpt = correctType === "TO" ? toOpt : ingOpt;
+    const wrongOpt = correctType === "TO" ? ingOpt : toOpt;
+
+    return putCorrectOnLeft ? [correctOpt, wrongOpt] : [wrongOpt, correctOpt];
   }
 
   const startGame = (modeKey, retryWrong = false) => {
