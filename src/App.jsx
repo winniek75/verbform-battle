@@ -228,12 +228,12 @@ function shuffle(arr) {
 }
 
 const MODES = {
-  basic:  { key:"basic",  icon:"📖", title:"基礎練習",       sub:"to動詞 vs 動詞ing の2択", color:"#00d4aa", count:20, time:null,
-            pool: () => shuffle(ALL_Q.filter(q => q.type === "TO" || q.type === "ING")).slice(0, 20) },
-  both:   { key:"both",   icon:"🔄", title:"BOTH 使い分け",   sub:"同じ動詞でも意味が変わる！", color:"#a78bfa", count:16, time:null,
-            pool: () => shuffle(ALL_Q.filter(q => q.type === "BOTH_TO" || q.type === "BOTH_ING")).slice(0, 16) },
-  attack: { key:"attack", icon:"⚡", title:"タイムアタック",   sub:"12秒制限・全問題から出題", color:"#f59e0b", count:25, time:12,
-            pool: () => shuffle(ALL_Q).slice(0, 25) },
+  basic:  { key:"basic",  icon:"📖", title:"基礎練習",       sub:"to動詞 vs 動詞ing の2択", color:"#00d4aa", count:10, time:null,
+            pool: () => shuffle(ALL_Q.filter(q => q.type === "TO" || q.type === "ING")).slice(0, 10) },
+  both:   { key:"both",   icon:"🔄", title:"BOTH 使い分け",   sub:"同じ動詞でも意味が変わる！", color:"#a78bfa", count:10, time:null,
+            pool: () => shuffle(ALL_Q.filter(q => q.type === "BOTH_TO" || q.type === "BOTH_ING")).slice(0, 10) },
+  attack: { key:"attack", icon:"⚡", title:"タイムアタック",   sub:"12秒制限・全問題から出題", color:"#f59e0b", count:15, time:12,
+            pool: () => shuffle(ALL_Q).slice(0, 15) },
 };
 
 // ─── CSS ─────────────────────────────────────────────────────────────────────
@@ -314,6 +314,9 @@ export default function App() {
 
   // 問題ごとのランダム配置を保持するためのMap
   const optsOrderRef = useRef(new Map());
+  // 左右のバランスを保つためのカウンター
+  const leftCountRef = useRef(0);
+  const rightCountRef = useRef(0);
 
   function buildOpts(q, idx) {
     if (!q) return [];
@@ -339,14 +342,39 @@ export default function App() {
     // 問題IDとインデックスに基づいて配置順を決定（一度決めたら変更しない）
     const qKey = `${q.id}-${idx}`;
     if (!optsOrderRef.current.has(qKey)) {
-      // 完全にランダムに正解の位置を決める（50%の確率で左か右）
-      const putCorrectOnLeft = Math.random() < 0.5;
+      // バランスを考慮しつつランダムに配置
+      let putCorrectOnLeft;
+
+      // 左右の差が大きい場合は偏りを修正
+      const diff = leftCountRef.current - rightCountRef.current;
+      if (Math.abs(diff) >= 3) {
+        // 差が3以上なら少ない方に配置
+        putCorrectOnLeft = diff > 0 ? false : true;
+      } else {
+        // そうでなければ完全ランダム（でも少し調整）
+        const randomValue = Math.random();
+        // 少ない方に少しだけ偏りやすくする
+        if (diff > 0) {
+          putCorrectOnLeft = randomValue < 0.4; // 左が多いので右寄り (40%で左)
+        } else if (diff < 0) {
+          putCorrectOnLeft = randomValue < 0.6; // 右が多いので左寄り (60%で左)
+        } else {
+          putCorrectOnLeft = randomValue < 0.5; // 同じなら50/50
+        }
+      }
+
+      // カウンターを更新
+      if (putCorrectOnLeft) {
+        leftCountRef.current++;
+      } else {
+        rightCountRef.current++;
+      }
+
       optsOrderRef.current.set(qKey, putCorrectOnLeft);
     }
     const putCorrectOnLeft = optsOrderRef.current.get(qKey);
 
     // 正解を左に置くか右に置くかを決定
-    const options = [toOpt, ingOpt];
     const correctOpt = correctType === "TO" ? toOpt : ingOpt;
     const wrongOpt = correctType === "TO" ? ingOpt : toOpt;
 
@@ -365,6 +393,8 @@ export default function App() {
     setQKey(k => k + 1); setTimeLeft(c.time ?? 12);
     comboRef.current = 0; timeLRef.current = c.time ?? 12;
     optsOrderRef.current.clear(); // ランダム配置をリセット
+    leftCountRef.current = 0;  // カウンターをリセット
+    rightCountRef.current = 0; // カウンターをリセット
     optsRef.current = buildOpts(pool[0], 0);
     setScreen("play");
   };
