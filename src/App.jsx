@@ -352,6 +352,10 @@ export default function App() {
   };
 
   const advance = useCallback(() => {
+    // 音声を停止
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
     const next = qIdx + 1;
     if (next >= questions.length) { setScreen("result"); return; }
     setAnswered(null); setQIdx(next); setQKey(k => k + 1);
@@ -395,6 +399,31 @@ export default function App() {
     setTimeout(() => setParticles(p => p.filter(pp => !np.find(n => n.id === pp.id))), 1600);
   }
 
+  // Text-to-Speech関数
+  const speakSentence = (text) => {
+    if ('speechSynthesis' in window) {
+      // 既存の音声を停止
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US'; // アメリカ英語
+      utterance.rate = 0.9; // 話速
+      utterance.pitch = 1.0; // ピッチ
+      utterance.volume = 0.8; // 音量
+
+      // 利用可能な音声を取得して、ネイティブっぽい音声を選択
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoices = voices.filter(voice => voice.lang.startsWith('en-'));
+      if (englishVoices.length > 0) {
+        // Google音声を優先的に選択
+        const googleVoice = englishVoices.find(voice => voice.name.includes('Google'));
+        utterance.voice = googleVoice || englishVoices[0];
+      }
+
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   const handleAnswer = useCallback((opt) => {
     if (answered || !curQ) return;
     clearInterval(timerRef.current);
@@ -403,6 +432,11 @@ export default function App() {
     const ok = opt.type === correctType;
     setAnswered({ chosenType: opt.type, correct: ok, timeout: false });
     spawnParticles(ok);
+
+    // 正解の文章を音声で読み上げる
+    const completeSentence = curQ.sentence.replace("___", curQ.blank);
+    setTimeout(() => speakSentence(completeSentence), 300);
+
     if (ok) {
       const tb  = hasTimer ? Math.max(0, timeLRef.current - 1) * 8 : 0;
       const nc  = comboRef.current + 1;
@@ -421,7 +455,26 @@ export default function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answered, curQ, hasTimer, advance]);
 
-  useEffect(() => () => { clearTimeout(advRef.current); clearInterval(timerRef.current); }, []);
+  // 音声エンジンの初期化
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      // 音声リストを取得するためのハック（Chromeで必要）
+      window.speechSynthesis.getVoices();
+      // 音声リストが更新されたときの処理
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+  }, []);
+
+  useEffect(() => () => {
+    clearTimeout(advRef.current);
+    clearInterval(timerRef.current);
+    // 音声を停止
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }, []);
   useEffect(() => { if (curQ) optsRef.current = buildOpts(curQ); }, [qIdx, questions]); // eslint-disable-line
 
   useEffect(() => {
@@ -451,7 +504,14 @@ export default function App() {
           particles={particles} qKey={qKey}
           onAnswer={handleAnswer}
           onAdvance={advance}
-          onBack={() => { clearInterval(timerRef.current); clearTimeout(advRef.current); setScreen("home"); }}
+          onBack={() => {
+            clearInterval(timerRef.current);
+            clearTimeout(advRef.current);
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+            }
+            setScreen("home");
+          }}
         />
       )}
       {screen === "result" && (
