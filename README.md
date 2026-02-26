@@ -1,38 +1,58 @@
-# VerbForm Battle 🎮
+# 英検 Grammar Drill Master
 
-英検4〜3級レベルの動詞パターン練習ゲーム。  
-**to + 動詞** vs **動詞 + ing** の使い分けをゲーム形式でマスターできます。
+英検３級・準２級レベルの関係詞（関係代名詞・関係副詞）と分詞を攻略するドリルゲームです。
 
-## 問題数
+## 収録内容（108問）
 
-- **全94問**収録
-  - TO動詞: 35問（want / hope / decide / plan / need / promise / agree / refuse / offer / choose / manage / fail / expect / afford / appear / seem / prepare）
-  - ING動詞: 34問（enjoy / finish / keep / avoid / mind / miss / consider / suggest / practice / delay / put off / give up / imagine / dislike / look forward to / spend時間-ing）
-  - BOTH使い分け: 25問（remember / forget / stop / try / regret 各5問）
+### ３級レベル
+- 関係代名詞 who（主格）
+- 関係代名詞 which（主格・目的格）
+- 関係代名詞 that（目的格）
+- **what vs that のひっかけ問題**
+- 現在分詞（前置・後置修飾）
+- 過去分詞（前置・後置修飾）
+- **感情動詞 -ing vs -ed のひっかけ問題**
+- 現在分詞 vs 過去分詞の判断
 
-## ゲームモード
+### 準２級レベル
+- 関係代名詞 whose（人・物どちらの先行詞も）
+- 関係副詞 where
+- **which vs where のひっかけ問題**
+- 関係副詞 when
+- 関係副詞 why
+- 目的格 whom
+- 前置詞＋関係代名詞
+- **非制限用法（コンマあり）のひっかけ問題**
+- **that のみ使える場合のひっかけ問題**
+- 分詞構文（時・理由・条件・受け身）
+- 分詞構文（完了形 Having done）
+- 否定の分詞構文
+- 独立分詞構文
+- 慣用的分詞構文（Strictly speaking 等）
+- **with＋分詞のひっかけ問題**
 
-| モード | 問題数 | 特徴 |
-|--------|--------|------|
-| 📖 基礎練習 | 20問 | to動詞 vs 動詞ing の2択 |
-| 🔄 BOTH 使い分け | 16問 | 同じ動詞でも意味が変わる！ |
-| ⚡ タイムアタック | 25問 | 12秒制限・コンボで得点倍率UP |
+## 機能
 
-## ローカル開発
+- 毎回ランダム出題（ひっかけ問題約38%を確保）
+- コンボシステム（連続正解でボーナス点＋コンボ表示）
+- ランク評価（S/A/B/C/D）
+- 間違えた問題だけ再ドリル
+- Enterキー対応
+- 記述式問題（fill）あり
+
+## セットアップ
 
 ```bash
 npm install
 npm run dev
 ```
 
-## ビルド
+## デプロイ（Vercel + GitHub）
 
-```bash
-npm run build
-```
+1. このリポジトリを GitHub に push
+2. [vercel.com](https://vercel.com) でリポジトリをインポート
+3. フレームワーク: **Vite** を選択（自動検出されます）
+4. Deploy ボタンをクリック
 
-## Vercelデプロイ
-
-GitHubと連携してVercelにpushするだけで自動デプロイされます。  
-Build Command: `npm run build`  
-Output Directory: `dist`
+ビルドコマンド: `npm run build`  
+出力ディレクトリ: `dist`
