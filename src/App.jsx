@@ -542,6 +542,29 @@ body {
   70% {opacity:1;transform:translateX(-50%) translateY(0)}
   100%{opacity:0;transform:translateX(-50%) translateY(-10px)}
 }
+
+.combo-milestone-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; pointer-events: none;
+  animation: milestoneAnim 1.5s ease forwards;
+}
+.combo-milestone-text {
+  font-family: 'Nunito', sans-serif; font-weight: 900;
+  font-size: clamp(36px, 10vw, 64px); color: #fff;
+  text-shadow: 0 0 40px rgba(99,102,241,.6), 0 4px 20px rgba(0,0,0,.5);
+  animation: milestoneTextPop 1.5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes milestoneAnim { 0%{opacity:0} 10%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
+@keyframes milestoneTextPop { 0%{transform:scale(0) rotate(-10deg);opacity:0} 30%{transform:scale(1.3) rotate(3deg);opacity:1} 50%{transform:scale(1) rotate(0)} 100%{transform:scale(.8) translateY(-30px);opacity:0} }
+
+.adaptive-hint-vfb {
+  background: linear-gradient(135deg, #ede9fe, #fce7f3);
+  border-left: 3px solid #8b5cf6;
+  border-radius: 9px; padding: 8px 12px; margin-top: 8px;
+  font-size: 0.8rem; color: #7c3aed; font-weight: 700;
+  animation: fadeSlide 0.3s ease;
+}
 `;
 
 // ── component ───────────────────────────────────────────────
@@ -565,7 +588,22 @@ export default function App() {
   const [toastMsg, setToastMsg] = useState(null);
   const [highScore, setHighScore] = useState(() => loadLS(LS_KEYS.HIGH_SCORE, 0));
   const [totalXP, setTotalXP]     = useState(() => loadLS(LS_KEYS.TOTAL_XP, 0));
+  const [comboMilestone, setComboMilestone] = useState(null);
+  const [recentResults, setRecentResults] = useState([]);
+  const [showAdaptiveHint, setShowAdaptiveHint] = useState(false);
   const inputRef = useRef(null);
+
+  const COMBO_MILESTONES = { 3: "NICE! \u2728", 5: "GREAT! \uD83D\uDD25", 7: "AMAZING! \u26A1", 10: "UNSTOPPABLE! \uD83D\uDC8E" };
+
+  // Adaptive hint logic
+  useEffect(() => {
+    if (recentResults.length >= 5) {
+      const wrongCount = recentResults.filter(r => !r).length;
+      const allCorrect = recentResults.every(r => r);
+      if (wrongCount >= 3) setShowAdaptiveHint(true);
+      else if (allCorrect) setShowAdaptiveHint(false);
+    }
+  }, [recentResults]);
 
   useEffect(() => {
     if (window.WiseXP) window.WiseXP.init('verbform-battle');
@@ -579,6 +617,7 @@ export default function App() {
     setQuestions(qs); setCur(0); setScore(0); setCombo(0);
     setMaxCombo(0); setSelected(null); setFill(""); setShown(false);
     setWrongs([]); setStreak([]); setTotal(0); setAnim(""); setToastMsg(null);
+    setComboMilestone(null); setRecentResults([]); setShowAdaptiveHint(false);
     setScreen("drill");
   }, []);
 
@@ -597,8 +636,17 @@ export default function App() {
       setAnim("pop"); setTimeout(() => setAnim(""), 400);
       const msg = getComboMsg(nc);
       if (msg) { setToastMsg(msg); setToastKey(k => k + 1); }
+      // Combo milestone celebration
+      if (COMBO_MILESTONES[nc]) {
+        setComboMilestone(COMBO_MILESTONES[nc]);
+        setTimeout(() => setComboMilestone(null), 1500);
+      }
+      // Adaptive hint: track recent
+      setRecentResults(prev => { const next = [...prev, true]; return next.slice(-5); });
     } else {
       playWrongSound();
+      // Adaptive hint: track recent
+      setRecentResults(prev => { const next = [...prev, false]; return next.slice(-5); });
       if (window.WiseXP) window.WiseXP.reportWrong({ question: q.sentence, correct: q.answer, playerAnswer: ans });
       setCombo(0); setToastMsg(null);
       setWrongs(w => [...w, { ...q, yourAnswer: ans }]);
@@ -851,6 +899,14 @@ export default function App() {
                 ))}
               </div>
 
+              {/* Adaptive hint */}
+              {showAdaptiveHint && !shown && q.hint && (
+                <div className="adaptive-hint-vfb">{"\uD83D\uDCA1"} {q.hint}</div>
+              )}
+              {showAdaptiveHint && !shown && !q.hint && q.explanation && (
+                <div className="adaptive-hint-vfb">{"\uD83D\uDCA1"} {q.explanation.split("\u3002")[0]}{"\u3002"}</div>
+              )}
+
               {/* multiple choice */}
               {q.type === "multiple" && (
                 <div className="opts">
@@ -925,6 +981,12 @@ export default function App() {
             )}
           </div>
         </div>
+        {/* Combo milestone overlay */}
+        {comboMilestone && (
+          <div key={`ms-${combo}`} className="combo-milestone-overlay">
+            <div className="combo-milestone-text">{comboMilestone}</div>
+          </div>
+        )}
       </>
     );
   }
@@ -944,6 +1006,16 @@ export default function App() {
               <div className="result-emoji">{resultEmoji}</div>
               <div className="result-title">結果発表！</div>
               <div className="big-score">{total - wrongs.length} / {total}</div>
+              {accuracy === 100 && total >= 3 && (
+                <div style={{ fontSize: "1.3rem", fontWeight: 900, background: "linear-gradient(135deg, #f59e0b, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 6 }}>
+                  PERFECT! {"\uD83D\uDC8E"}
+                </div>
+              )}
+              {accuracy >= 80 && accuracy < 100 && (
+                <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "#7c3aed", marginBottom: 6 }}>
+                  {"\u3042\u3068"}{wrongs.length}{"\u554F\u3067\u30D1\u30FC\u30D5\u30A7\u30AF\u30C8\uFF01"}
+                </div>
+              )}
               <div
                 className="rank-label"
                 style={{ background: rank.bg, color: rank.color }}
