@@ -12,6 +12,82 @@ function shuffle(arr) {
   return a;
 }
 
+// ── localStorage helpers ───────────────────────────────────
+const LS_KEYS = {
+  HIGH_SCORE: "verbform_highScore",
+  TOTAL_XP: "verbform_totalXP",
+  WRONG_HISTORY: "verbform_wrongHistory",
+};
+
+function loadLS(key, fallback) {
+  try {
+    const v = localStorage.getItem(key);
+    return v !== null ? JSON.parse(v) : fallback;
+  } catch { return fallback; }
+}
+function saveLS(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+}
+
+// ── Sound effects (Web Audio API) ──────────────────────────
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_audioCtx.state === "suspended") _audioCtx.resume();
+  return _audioCtx;
+}
+
+function playCorrectSound() {
+  try {
+    const ctx = getAudioCtx();
+    const freqs = [523.25, 659.25, 783.99];
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.value = 0.2;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      const start = ctx.currentTime + i * 0.1;
+      osc.start(start);
+      gain.gain.setValueAtTime(0.2, start);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
+      osc.stop(start + 0.3);
+    });
+  } catch {}
+}
+
+function playWrongSound() {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(150, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.2);
+    gain.gain.value = 0.3;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    osc.stop(ctx.currentTime + 0.2);
+  } catch {}
+}
+
+// ── TTS helper ─────────────────────────────────────────────
+function speakAnswer(text) {
+  try {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "en-US";
+    utter.rate = 0.9;
+    window.speechSynthesis.speak(utter);
+  } catch {}
+}
+
 const COMBO_MSGS = [
   { min: 2,  text: "ナイス！✨",    color: "#7c3aed" },
   { min: 4,  text: "すごい！🔥",   color: "#ea580c" },
@@ -487,6 +563,8 @@ export default function App() {
   const [anim, setAnim]         = useState("");
   const [toastKey, setToastKey] = useState(0);
   const [toastMsg, setToastMsg] = useState(null);
+  const [highScore, setHighScore] = useState(() => loadLS(LS_KEYS.HIGH_SCORE, 0));
+  const [totalXP, setTotalXP]     = useState(() => loadLS(LS_KEYS.TOTAL_XP, 0));
   const inputRef = useRef(null);
 
   const q = questions[cur];
@@ -506,6 +584,7 @@ export default function App() {
     const ok = ans.trim().toLowerCase() === q.answer.trim().toLowerCase();
     setSelected(ans); setShown(true); setTotal(t => t + 1);
     if (ok) {
+      playCorrectSound();
       const nc = combo + 1;
       setCombo(nc); setMaxCombo(m => Math.max(m, nc));
       const bonus = Math.min(nc - 1, 5) * 15;
@@ -515,11 +594,21 @@ export default function App() {
       const msg = getComboMsg(nc);
       if (msg) { setToastMsg(msg); setToastKey(k => k + 1); }
     } else {
+      playWrongSound();
       setCombo(0); setToastMsg(null);
       setWrongs(w => [...w, { ...q, yourAnswer: ans }]);
       setStreak(h => [...h, false]);
       setAnim("shake"); setTimeout(() => setAnim(""), 450);
+      // Track wrong answer in localStorage
+      const history = loadLS(LS_KEYS.WRONG_HISTORY, []);
+      const entry = { id: q.id, sentence: q.sentence, answer: q.answer, yourAnswer: ans, date: new Date().toISOString() };
+      history.push(entry);
+      // Keep last 200 entries
+      if (history.length > 200) history.splice(0, history.length - 200);
+      saveLS(LS_KEYS.WRONG_HISTORY, history);
     }
+    // TTS: read the correct verb form after answering
+    setTimeout(() => speakAnswer(q.answer), 400);
   }, [shown, q, combo]);
 
   // ─ next ───────────────────────────────────────────────────
@@ -549,6 +638,20 @@ export default function App() {
     if (screen === "drill" && q?.type === "fill")
       setTimeout(() => inputRef.current?.focus(), 80);
   }, [cur, screen, q]);
+
+  // ─ persist high score & XP when game ends ───────────────────
+  useEffect(() => {
+    if (screen === "result" && total > 0) {
+      if (score > highScore) {
+        setHighScore(score);
+        saveLS(LS_KEYS.HIGH_SCORE, score);
+      }
+      const newXP = totalXP + score;
+      setTotalXP(newXP);
+      saveLS(LS_KEYS.TOTAL_XP, newXP);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
 
   const accuracy = total > 0 ? Math.round(((total - wrongs.length) / total) * 100) : 0;
   const isCorrect = selected !== null &&
@@ -612,6 +715,22 @@ export default function App() {
                 ))}
               </div>
             </div>
+
+            {(highScore > 0 || totalXP > 0) && (
+              <div className="card" style={{ background: "linear-gradient(135deg, #fef9c3, #fef3c7)", border: "2px solid #fbbf24" }}>
+                <div className="clabel" style={{ color: "#92400e" }}>🏆 あなたの記録</div>
+                <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontFamily: "'Nunito',sans-serif", fontWeight: 900, fontSize: "1.5rem", color: "#b45309" }}>{highScore}</div>
+                    <div style={{ fontSize: "0.7rem", color: "#92400e", fontWeight: 700 }}>ハイスコア</div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontFamily: "'Nunito',sans-serif", fontWeight: 900, fontSize: "1.5rem", color: "#7c3aed" }}>{totalXP}</div>
+                    <div style={{ fontSize: "0.7rem", color: "#6b21a8", fontWeight: 700 }}>累計XP</div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="info-box">
               ⚠️ <b style={{color:"#ef4444"}}>ひっかけ問題</b>あり（what vs that など）<br />
@@ -838,6 +957,18 @@ export default function App() {
                 <div className="stat-box">
                   <div className="stat-val">🔥{maxCombo}</div>
                   <div className="stat-lbl">最大コンボ</div>
+                </div>
+              </div>
+              <div className="stats-grid" style={{ gridTemplateColumns: "1fr 1fr", marginBottom: 16 }}>
+                <div className="stat-box" style={{ background: score >= highScore ? "#fef9c3" : "#f9fafb", border: score >= highScore ? "2px solid #fbbf24" : "1.5px solid #f3f4f6" }}>
+                  <div className="stat-val" style={{ color: score >= highScore ? "#b45309" : "#1f2937" }}>
+                    {score >= highScore ? "🎉 " : ""}{highScore}
+                  </div>
+                  <div className="stat-lbl">{score >= highScore ? "NEW ハイスコア！" : "ハイスコア"}</div>
+                </div>
+                <div className="stat-box">
+                  <div className="stat-val" style={{ color: "#7c3aed" }}>{totalXP}</div>
+                  <div className="stat-lbl">累計XP</div>
                 </div>
               </div>
 
