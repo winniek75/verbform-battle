@@ -567,6 +567,10 @@ export default function App() {
   const [totalXP, setTotalXP]     = useState(() => loadLS(LS_KEYS.TOTAL_XP, 0));
   const inputRef = useRef(null);
 
+  useEffect(() => {
+    if (window.WiseXP) window.WiseXP.init('verbform-battle');
+  }, []);
+
   const q = questions[cur];
 
   // ─ start game ─────────────────────────────────────────────
@@ -595,6 +599,7 @@ export default function App() {
       if (msg) { setToastMsg(msg); setToastKey(k => k + 1); }
     } else {
       playWrongSound();
+      if (window.WiseXP) window.WiseXP.reportWrong({ question: q.sentence, correct: q.answer, playerAnswer: ans });
       setCombo(0); setToastMsg(null);
       setWrongs(w => [...w, { ...q, yourAnswer: ans }]);
       setStreak(h => [...h, false]);
@@ -649,6 +654,11 @@ export default function App() {
       const newXP = totalXP + score;
       setTotalXP(newXP);
       saveLS(LS_KEYS.TOTAL_XP, newXP);
+      if (window.WiseXP) {
+        const correct = total - wrongs.length;
+        const grade = level === "grade3" ? "3" : level === "pre2" ? "P2" : "all";
+        window.WiseXP.reportGame({ score, correct, total, maxCombo, grade });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen]);
