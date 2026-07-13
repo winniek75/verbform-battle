@@ -707,6 +707,16 @@ export default function App() {
         const grade = level === "grade3" ? "3" : level === "pre2" ? "P2" : "all";
         window.WiseXP.reportGame({ score, correct, total, maxCombo, grade });
       }
+      // → MoWISE portal へスコア送信 (WiseGame Bridge)
+      try {
+        const correct = total - wrongs.length;
+        const acc = Math.round((correct / total) * 100);
+        window.WiseGame && window.WiseGame.reportComplete({
+          score, maxScore: questions.length * 10, accuracy: acc,
+          metadata: { level, maxCombo,
+            wrongAnswers: wrongs.slice(0, 20).map(w => ({ id: w.id, sentence: w.sentence })) }
+        });
+      } catch(e) {}
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen]);
