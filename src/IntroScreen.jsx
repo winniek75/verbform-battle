@@ -335,7 +335,7 @@ function CourseC1({ onNext }) {
     <div>
       <div className="ihero">
         <span className="ihero-icon">🧩</span>
-        <h1>コース1<br /><span className="imark">うしろから説明してみよう</span></h1>
+        <h1><span className="imark">うしろから説明してみよう</span></h1>
         <p className="ihero-note">who・which・that のつかい方</p>
       </div>
 
@@ -421,6 +421,16 @@ function CourseC1({ onNext }) {
         </div>
       </div>
 
+      <div className="icard" style={{background:"#fff5f5",border:"2.5px solid #ef6b6b",boxShadow:"5px 5px 0 #ef6b6b"}}>
+        <h2 style={{textAlign:"center",fontSize:"1rem",marginBottom:8}}>まとめ</h2>
+        <div style={{fontSize:".85rem",lineHeight:2,fontWeight:700}}>
+          <b style={{color:"#ef6b6b"}}>人</b>の説明 → <b>who</b><br/>
+          <b style={{color:"#06d6a0"}}>物・動物</b>の説明 → <b>which</b><br/>
+          <b style={{color:"#a78bfa"}}>どっちでもOK</b> → <b>that</b><br/>
+          迷ったら <b>that</b> でだいたい正解！
+        </div>
+      </div>
+
       <div className="icard red">
         <span className="itag">練習クイズ 3問</span>
         <h2>どれを使う？ 考えてみよう！</h2>
@@ -454,7 +464,7 @@ function CourseC1({ onNext }) {
       </div>
 
       <div className="inavbtns">
-        <button className="inbtn" onClick={onNext}>C2 へ →</button>
+        <button className="inbtn" onClick={onNext}>次へ →</button>
       </div>
     </div>
   );
@@ -469,7 +479,7 @@ function CourseC2({ onNext, onBack }) {
     <div>
       <div className="ihero">
         <span className="ihero-icon">⚠️</span>
-        <h1>コース2<br /><span className="imark">what と that どっち？</span></h1>
+        <h1><span className="imark">what と that どっち？</span></h1>
         <p className="ihero-note">「前に説明したい言葉があるかどうか」を見よう！</p>
       </div>
 
@@ -524,6 +534,15 @@ function CourseC2({ onNext, onBack }) {
         ))}
       </div>
 
+      <div className="icard" style={{background:"#fffbeb",border:"2.5px solid #ffc947",boxShadow:"5px 5px 0 #ffc947"}}>
+        <h2 style={{textAlign:"center",fontSize:"1rem",marginBottom:8}}>まとめ</h2>
+        <div style={{fontSize:".85rem",lineHeight:2,fontWeight:700}}>
+          前に説明したい言葉が<b style={{color:"#06d6a0"}}>ある</b> → <b>that</b>（the cake <b>that</b> ...）<br/>
+          前に説明したい言葉が<b style={{color:"#ef6b6b"}}>ない</b> → <b>what</b>（<b>What</b> she said ...）<br/>
+          what = 「〜したもの・こと」の意味が入っている！
+        </div>
+      </div>
+
       <div className="icard yel">
         <span className="itag">練習クイズ 3問</span>
         <h2>what か that か選ぼう！</h2>
@@ -562,8 +581,8 @@ function CourseC2({ onNext, onBack }) {
       </div>
 
       <div className="inavbtns">
-        <button className="inbtn back" onClick={onBack}>← C1 に戻る</button>
-        <button className="inbtn" onClick={onNext}>C3 へ →</button>
+        <button className="inbtn back" onClick={onBack}>← 前へ</button>
+        <button className="inbtn" onClick={onNext}>次へ →</button>
       </div>
     </div>
   );
@@ -578,7 +597,7 @@ function CourseC3({ onNext, onBack }) {
     <div>
       <div className="ihero">
         <span className="ihero-icon">✂️</span>
-        <h1>コース3<br /><span className="imark">-ing と -ed で短く説明</span></h1>
+        <h1><span className="imark">-ing と -ed で短く説明</span></h1>
         <p className="ihero-note">「〜している」「〜された」を1語でつけよう！</p>
       </div>
 
@@ -648,6 +667,16 @@ function CourseC3({ onNext, onBack }) {
         </div>
       </div>
 
+      <div className="icard" style={{background:"#ecfdf5",border:"2.5px solid #06d6a0",boxShadow:"5px 5px 0 #06d6a0"}}>
+        <h2 style={{textAlign:"center",fontSize:"1rem",marginBottom:8}}>まとめ</h2>
+        <div style={{fontSize:".85rem",lineHeight:2,fontWeight:700}}>
+          自分で〜<b style={{color:"#118ab2"}}>している</b> → <b>-ing</b>（a sleeping cat）<br/>
+          誰かに〜<b style={{color:"#06d6a0"}}>された</b> → <b>-ed</b>（a broken window）<br/>
+          <b>1語</b>だけ → 名詞の<b>前</b>に置く<br/>
+          <b>2語以上</b>続く → 名詞の<b>後ろ</b>に置く
+        </div>
+      </div>
+
       <div className="icard grn">
         <span className="itag">練習クイズ 4問</span>
         <h2>-ing か -ed か選ぼう！</h2>
@@ -693,8 +722,8 @@ function CourseC3({ onNext, onBack }) {
       </div>
 
       <div className="inavbtns">
-        <button className="inbtn back" onClick={onBack}>← C2 に戻る</button>
-        <button className="inbtn" onClick={onNext}>C4 へ →</button>
+        <button className="inbtn back" onClick={onBack}>← 前へ</button>
+        <button className="inbtn" onClick={onNext}>次へ →</button>
       </div>
     </div>
   );
@@ -709,7 +738,7 @@ function CourseC4({ onNext, onBack }) {
     <div>
       <div className="ihero">
         <span className="ihero-icon">🎢</span>
-        <h1>コース4<br /><span className="imark">exciting と excited</span></h1>
+        <h1><span className="imark">exciting と excited</span></h1>
         <p className="ihero-note">「わくわくさせる側」か「わくわくしている側」かを考えよう</p>
       </div>
 
@@ -769,6 +798,15 @@ function CourseC4({ onNext, onBack }) {
         </table>
       </div>
 
+      <div className="icard" style={{background:"#f5f3ff",border:"2.5px solid #a78bfa",boxShadow:"5px 5px 0 #a78bfa"}}>
+        <h2 style={{textAlign:"center",fontSize:"1rem",marginBottom:8}}>まとめ</h2>
+        <div style={{fontSize:".85rem",lineHeight:2,fontWeight:700}}>
+          <b style={{color:"#a78bfa"}}>モノ・出来事</b>が主語 → <b>-ing</b>（The game is exciting）<br/>
+          <b style={{color:"#118ab2"}}>人</b>が主語 → <b>-ed</b>（I am excited）<br/>
+          「<b>〜させる</b>側」が -ing、「<b>〜している</b>側」が -ed！
+        </div>
+      </div>
+
       <div className="icard pur">
         <span className="itag">練習クイズ 4問</span>
         <h2>-ing か -ed か選ぼう！</h2>
@@ -818,8 +856,8 @@ function CourseC4({ onNext, onBack }) {
       </div>
 
       <div className="inavbtns">
-        <button className="inbtn back" onClick={onBack}>← C3 に戻る</button>
-        <button className="inbtn" onClick={onNext}>🏆 まとめテストへ →</button>
+        <button className="inbtn back" onClick={onBack}>← 前へ</button>
+        <button className="inbtn" onClick={onNext}>まとめテストへ →</button>
       </div>
     </div>
   );
@@ -829,7 +867,7 @@ function CourseC4({ onNext, onBack }) {
 //  まとめテスト
 // ════════════════════════════════════════════════
 const FINAL_QS = [
-  {id:"f1",tag:"C1 の問題",
+  {id:"f1",tag:"who/which/that",
     q:`Q1.「彼女に手紙を書いた男の子を知っている。」<br>I know the boy <span class="blank-box">____</span> wrote her a letter.`,
     choices:[
       {label:"who",   correct:true, msg:"✅ 正解！ boy（人）の説明 → who。「書いた」の主役が who になっているよ"},
@@ -837,7 +875,7 @@ const FINAL_QS = [
       {label:"what",  correct:false,msg:"❌ 前に the boy があるので what は使えない！"},
       {label:"whose", correct:false,msg:"❌ whose は「〜の」（持ち物を説明するとき）。今回は違う"},
     ]},
-  {id:"f2",tag:"C1 の問題",
+  {id:"f2",tag:"who/which/that",
     q:`Q2.「これは彼女が描いた絵だ。」<br>This is the picture <span class="blank-box">____</span> she drew.`,
     choices:[
       {label:"who",  correct:false,msg:"❌ 絵はモノだよ！who は人に使う"},
@@ -845,37 +883,37 @@ const FINAL_QS = [
       {label:"what", correct:false,msg:"❌ 前に the picture があるので what は使えない！"},
       {label:"when", correct:false,msg:"❌ when は時間の説明に使う"},
     ]},
-  {id:"f3",tag:"C2 の問題",
+  {id:"f3",tag:"what vs that",
     q:`Q3.「あなたが感じていることを話して。」<br>Tell me <span class="blank-box">____</span> you feel.`,
     choices:[
       {label:"what",correct:true, msg:"✅ 正解！ 前に説明したい言葉がない → what = 「あなたが感じていること」"},
       {label:"that",correct:false,msg:"❌ 前に説明したい言葉がないので that ではなく what を使おう！"},
     ]},
-  {id:"f4",tag:"C2 の問題",
+  {id:"f4",tag:"what vs that",
     q:`Q4.「これが彼が昨日言ったことだ。」<br>This is <span class="blank-box">____</span> he said yesterday.`,
     choices:[
       {label:"what",correct:true, msg:"✅ 正解！ This is 〜のこと。前に説明したい言葉なし → what！"},
       {label:"that",correct:false,msg:"❌ 前に「説明したい言葉」がないので that は合わない。what が正しい！"},
     ]},
-  {id:"f5",tag:"C3 の問題",
+  {id:"f5",tag:"-ing / -ed",
     q:`Q5.「川の近くで寝ている猫」<br>the cat <span class="blank-box">____</span> near the river`,
     choices:[
       {label:"sleeping",correct:true, msg:"✅ 正解！ 猫が自分で寝ている → sleeping（-ing のかたち）。near the river と続くから後ろにつけるよ"},
       {label:"slept",   correct:false,msg:"❌ slept にすると「寝かされた猫」みたいな変な意味になる！"},
     ]},
-  {id:"f6",tag:"C3 の問題",
+  {id:"f6",tag:"-ing / -ed",
     q:`Q6.「英語で書かれた本」<br>a book <span class="blank-box">____</span> in English`,
     choices:[
       {label:"writing",correct:false,msg:"❌ writing だと「英語を書いている本」→ 本は書かれる側！"},
       {label:"written",correct:true, msg:"✅ 正解！ 本は「書かれた」→「される」→ written（-ed のかたち）"},
     ]},
-  {id:"f7",tag:"C4 の問題",
+  {id:"f7",tag:"感情の-ing/-ed",
     q:`Q7.「彼はその授業が退屈だと思った。」<br>He found the class <span class="blank-box">____</span>.`,
     choices:[
       {label:"boring",correct:true, msg:"✅ 正解！ 説明しているのは「授業（モノ）」→ 退屈させる側 → boring！"},
       {label:"bored", correct:false,msg:"❌ bored は人が退屈しているときに使う。ここは授業（モノ）の説明！"},
     ]},
-  {id:"f8",tag:"C4 の問題",
+  {id:"f8",tag:"感情の-ing/-ed",
     q:`Q8.「その知らせは驚くべきものだった。」<br>The news was <span class="blank-box">____</span>.`,
     choices:[
       {label:"surprising",correct:true, msg:"✅ 正解！ 知らせ（出来事）が「驚かせる側」→ surprising！"},
@@ -923,7 +961,7 @@ function FinalQuiz({ onBack, onStart }) {
       )}
 
       <div className="inavbtns">
-        <button className="inbtn back" onClick={onBack}>← C4 に戻る</button>
+        <button className="inbtn back" onClick={onBack}>← 前へ</button>
         {done && <button className="inbtn" onClick={onStart}>ゲームへ →</button>}
       </div>
     </div>
@@ -935,10 +973,10 @@ function FinalQuiz({ onBack, onStart }) {
 // ════════════════════════════════════════════════
 function Home({ onGo, onStart }) {
   const courses = [
-    {c:1,col:"#ef6b6b",title:"「どんな〇〇か」を\nうしろから説明する\nwho・which・that",badge:"人とモノの説明"},
-    {c:2,col:"#ffc947",title:"what と that\nどっちを使う？\nまちがいやすい！",badge:"⚠️ ひっかけ注意"},
-    {c:3,col:"#06d6a0",title:"-ing と -ed で\n「どんな〇〇か」を\n説明する",badge:"短くスッキリ！"},
-    {c:4,col:"#a78bfa",title:"exciting と excited\nどっちを使う？\n感情の表し方",badge:"⚠️ ひっかけ注意"},
+    {c:1,col:"#ef6b6b",title:"who・which・that\nで「どんな人？\nどんなモノ？」",badge:"人とモノの説明"},
+    {c:2,col:"#ffc947",title:"what と that\nまちがえやすい\nポイント解説！",badge:"ひっかけ注意"},
+    {c:3,col:"#06d6a0",title:"-ing と -ed\n「〜している」\n「〜された」",badge:"短くスッキリ！"},
+    {c:4,col:"#a78bfa",title:"exciting と excited\nどっちを使う？\n感情の表し方",badge:"ひっかけ注意"},
   ];
   return (
     <div style={{textAlign:"center"}}>
@@ -950,14 +988,14 @@ function Home({ onGo, onStart }) {
       <div className="ihome-grid">
         {courses.map(({c,col,title,badge})=>(
           <div key={c} className="ihcard" style={{borderColor:col,boxShadow:`4px 4px 0 ${col}`}} onClick={()=>onGo(c)}>
-            <div className="ihnum" style={{color:col}}>C{c}</div>
+            <div className="ihnum" style={{color:col}}>{["","🧩","⚠️","✂️","🎢"][c]}</div>
             <div className="ihtitle" style={{whiteSpace:"pre-line"}}>{title}</div>
             <div className="ihbadge" style={{background:col+"22",color:c===2?"#7a6000":col}}>{badge}</div>
           </div>
         ))}
       </div>
       <button className="inbtn" style={{fontSize:"1rem",padding:"14px 36px",marginTop:4}} onClick={()=>onGo(1)}>
-        C1 からスタート ▶
+        最初からスタート ▶
       </button>
       <br />
       <button onClick={onStart} style={{marginTop:12,padding:"10px 22px",borderRadius:99,border:"2px solid #ccc",background:"white",color:"#999",fontFamily:"'Nunito',sans-serif",fontSize:".8rem",cursor:"pointer"}}>
@@ -972,10 +1010,10 @@ function Home({ onGo, onStart }) {
 // ════════════════════════════════════════════════
 const DOTS = [
   {key:0,icon:"🏠",lbl:"ホーム"},
-  {key:1,icon:"🧩",lbl:"C1"},
-  {key:2,icon:"⚠️",lbl:"C2"},
-  {key:3,icon:"✂️",lbl:"C3"},
-  {key:4,icon:"🎢",lbl:"C4"},
+  {key:1,icon:"🧩",lbl:"who等"},
+  {key:2,icon:"⚠️",lbl:"what"},
+  {key:3,icon:"✂️",lbl:"分詞"},
+  {key:4,icon:"🎢",lbl:"感情"},
   {key:5,icon:"🏆",lbl:"テスト"},
 ];
 

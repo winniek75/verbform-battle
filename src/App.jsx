@@ -963,11 +963,13 @@ export default function App() {
                 <div className={`exp ${isCorrect ? "ec" : "ew"}`}>
                   <div className="exp-hd">
                     {isCorrect
-                      ? <span className="exp-ok">✓ 正解！やったね！</span>
+                      ? <span className="exp-ok">✓ 正解！ <span className="exp-ans">{q.answer}</span></span>
                       : <span className="exp-ng">✗ 不正解… 正解は <span className="exp-ans">{q.answer}</span></span>
                     }
                   </div>
-                  {q.explanation && <div className="exp-body">{q.explanation}</div>}
+                  <div className="exp-body">
+                    {q.explanation || `${q.sentence.replace("_____", q.answer)}`}
+                  </div>
                 </div>
               )}
             </div>

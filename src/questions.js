@@ -13,7 +13,7 @@ export const QUESTIONS = [
     sentence: "The boy _____ plays soccer is Ken.",
     options: ["who", "which", "what", "it"],
     answer: "who",
-    explanation: "「人（boy）」のあとは who を使うよ！",
+    explanation: "boy は「人」→ 人の説明をするときは who！「サッカーをする男の子はケンです」という意味だよ。",
   },
   {
     id: "who02", level: "grade3", type: "multiple",
@@ -21,7 +21,7 @@ export const QUESTIONS = [
     sentence: "I have a friend _____ can sing well.",
     options: ["who", "which", "whose", "where"],
     answer: "who",
-    explanation: "「人（friend）」のあとは who！",
+    explanation: "friend は「人」→ 人のうしろに説明をつけるときは who！「上手に歌える友達がいる」という意味。",
   },
   {
     id: "who03", level: "grade3", type: "multiple",
@@ -29,7 +29,7 @@ export const QUESTIONS = [
     sentence: "The girl _____ likes dogs is my friend.",
     options: ["who", "which", "what", "when"],
     answer: "who",
-    explanation: "「人（girl）」のあとは who！",
+    explanation: "girl は「人」→ who！「犬が好きな女の子は私の友達です」。人 = who、物・動物 = which と覚えよう！",
   },
   {
     id: "who04", level: "grade3", type: "multiple",
@@ -37,7 +37,7 @@ export const QUESTIONS = [
     sentence: "The man _____ lives next door is kind.",
     options: ["who", "which", "where", "what"],
     answer: "who",
-    explanation: "「人（man）」のあとは who！（that も使えるよ）",
+    explanation: "man は「人」→ who！「隣に住んでいる男の人は親切だ」。that を使ってもOKだよ！",
   },
   {
     id: "who05", level: "grade3", type: "fill",
@@ -45,6 +45,7 @@ export const QUESTIONS = [
     sentence: "She is the woman _____ helped me.",
     answer: "who",
     hint: "「人（woman）」のあとに使う関係代名詞は？",
+    explanation: "woman は「人」→ 人の説明をするときは who を使うよ！「私を助けてくれた女性」という意味になる。that でもOK！",
   },
   {
     id: "who06", level: "grade3", type: "multiple",
@@ -52,7 +53,7 @@ export const QUESTIONS = [
     sentence: "Do you know the boy _____ runs very fast?",
     options: ["who", "which", "whose", "what"],
     answer: "who",
-    explanation: "「人（boy）」のあとは who！",
+    explanation: "boy は「人」→ who！「すごく速く走る男の子を知ってる？」という意味。which は物・動物にしか使えないよ。",
   },
   {
     id: "who07", level: "grade3", type: "multiple",
@@ -60,7 +61,7 @@ export const QUESTIONS = [
     sentence: "The student _____ got 100 points is Tom.",
     options: ["who", "which", "it", "he"],
     answer: "who",
-    explanation: "「人（student）」のあとは who！",
+    explanation: "student は「人」→ who！「100点を取った生徒はトムです」。it や he では2つの文をつなげないよ。",
   },
 
   // ============================
@@ -72,7 +73,7 @@ export const QUESTIONS = [
     sentence: "I have a dog _____ runs very fast.",
     options: ["which", "who", "whose", "what"],
     answer: "which",
-    explanation: "「動物（dog）」のあとは which！（that も使えるよ）",
+    explanation: "dog は「動物」→ 物・動物の説明は which！「すごく速く走る犬を飼っている」。that でもOK！",
   },
   {
     id: "wh02", level: "grade3", type: "multiple",
@@ -80,7 +81,7 @@ export const QUESTIONS = [
     sentence: "The bag _____ is on the desk is mine.",
     options: ["which", "who", "whom", "where"],
     answer: "which",
-    explanation: "「物（bag）」のあとは which！",
+    explanation: "bag は「物」→ which！「机の上にあるカバンは私のです」。物・動物の説明は which を使うよ。",
   },
   {
     id: "wh03", level: "grade3", type: "fill",
@@ -88,6 +89,7 @@ export const QUESTIONS = [
     sentence: "I like the cake _____ my mom made.",
     answer: "which",
     hint: "「物（cake）」のあとに使う関係代名詞は？（that も OK）",
+    explanation: "cake は「物」→ 物の説明をするときは which を使うよ！「お母さんが作ったケーキ」。that でもOK。目的格なので省略もできる！",
   },
   {
     id: "wh04", level: "grade3", type: "multiple",
@@ -95,7 +97,7 @@ export const QUESTIONS = [
     sentence: "The bird _____ is singing now is beautiful.",
     options: ["which", "who", "what", "when"],
     answer: "which",
-    explanation: "「動物（bird）」のあとは which！（that も使えるよ）",
+    explanation: "bird は「動物」→ which！「今歌っている鳥はきれいだ」。動物も物と同じく which を使うよ。",
   },
   {
     id: "wh05", level: "grade3", type: "multiple",
@@ -103,7 +105,7 @@ export const QUESTIONS = [
     sentence: "This is the book _____ I want to read.",
     options: ["which", "who", "what", "whose"],
     answer: "which",
-    explanation: "「物（book）」のあとは which！（that も使えるよ）",
+    explanation: "book は「物」→ which！「これは私が読みたい本です」。I want to read の目的語なので省略もできるよ。",
   },
   {
     id: "wh06", level: "grade3", type: "multiple",
@@ -111,7 +113,7 @@ export const QUESTIONS = [
     sentence: "The red car _____ my dad drives is cool.",
     options: ["that", "who", "what", "whose"],
     answer: "that",
-    explanation: "「物（car）」のあとは which か that！",
+    explanation: "car は「物」→ that か which！「お父さんが運転する赤い車はカッコいい」。that は人にも物にも使える万能選手だよ。",
   },
 
   // ============================
@@ -155,6 +157,7 @@ export const QUESTIONS = [
     sentence: "I met a boy _____ can swim very fast.",
     answer: "who",
     hint: "「boy」は人？ 物？ 人なら who、物なら which！",
+    explanation: "boy は「人」→ who！「すごく速く泳げる男の子に会った」という意味。人の説明は who、物・動物の説明は which だよ！",
   },
 
   // ============================
@@ -198,6 +201,7 @@ export const QUESTIONS = [
     sentence: "Show me _____ you got at the store.",
     answer: "what",
     hint: "「あなたが買ったもの」→ 前に名詞はある？ない？",
+    explanation: "「お店で手に入れたもの」→ 前に名詞がない！what = 「〜したもの」の意味が入っているので what を使うよ。前に the bag などがあれば that になる！",
   },
   {
     id: "wt06", level: "grade3", type: "multiple",
@@ -217,7 +221,7 @@ export const QUESTIONS = [
     sentence: "Look at the _____ dog over there!",
     options: ["running", "run", "ran", "runs"],
     answer: "running",
-    explanation: "「走っている犬」→ -ing をつけて名詞の前に置くよ！",
+    explanation: "「走っている犬」→ 犬は自分で走っている（能動）→ running！1語だけなので名詞 dog の前に置くよ。",
   },
   {
     id: "pp02", level: "grade3", type: "multiple",
@@ -225,7 +229,7 @@ export const QUESTIONS = [
     sentence: "The _____ baby is so cute.",
     options: ["sleeping", "slept", "sleeps", "sleep"],
     answer: "sleeping",
-    explanation: "「眠っている赤ちゃん」→ sleeping！",
+    explanation: "「眠っている赤ちゃん」→ 赤ちゃんは自分で眠っている（能動）→ sleeping！1語だけなので baby の前に置くよ。",
   },
   {
     id: "pp03", level: "grade3", type: "fill",
@@ -233,6 +237,7 @@ export const QUESTIONS = [
     sentence: "I can hear a _____ (sing) bird.",
     answer: "singing",
     hint: "「歌っている鳥」→ sing に -ing をつけて！",
+    explanation: "鳥が「自分で歌っている」→ -ing のかたち！singing 1語だけなので名詞（bird）の前に置くよ。",
   },
   {
     id: "post01", level: "grade3", type: "multiple",
@@ -240,7 +245,7 @@ export const QUESTIONS = [
     sentence: "The girl _____ the piano is my sister.",
     options: ["playing", "played", "plays", "play"],
     answer: "playing",
-    explanation: "「ピアノを弾いている少女」→ playing で後ろから説明！",
+    explanation: "「ピアノを弾いている少女」→ 少女は自分で弾いている（能動）→ playing！the piano と続くので名詞 girl の後ろに置くよ。",
   },
   {
     id: "post02", level: "grade3", type: "multiple",
@@ -248,7 +253,7 @@ export const QUESTIONS = [
     sentence: "Do you know the boy _____ near the door?",
     options: ["standing", "stood", "stands", "stand"],
     answer: "standing",
-    explanation: "「ドアの近くに立っている少年」→ standing！",
+    explanation: "「ドアの近くに立っている少年」→ 自分で立っている（能動）→ standing！near the door と続くので後ろに置くよ。",
   },
   {
     id: "post03", level: "grade3", type: "fill",
@@ -256,6 +261,7 @@ export const QUESTIONS = [
     sentence: "The woman _____ (wear) a red hat is my aunt.",
     answer: "wearing",
     hint: "「赤い帽子をかぶっている女性」→ wear に -ing をつけて！",
+    explanation: "女性が「自分でかぶっている」→ wearing！a red hat と続くので、名詞（woman）の後ろに置くよ。",
   },
 
   // ============================
@@ -267,7 +273,7 @@ export const QUESTIONS = [
     sentence: "I found a _____ window.",
     options: ["broken", "breaking", "break", "broke"],
     answer: "broken",
-    explanation: "「壊れた窓」→ 過去分詞（broken）！",
+    explanation: "「壊れた窓」→ 窓は誰かに壊された（受け身）→ broken！break の過去分詞。1語だけなので名詞 window の前に置くよ。",
   },
   {
     id: "pa02", level: "grade3", type: "multiple",
@@ -275,7 +281,7 @@ export const QUESTIONS = [
     sentence: "I ate the _____ pizza.",
     options: ["made", "making", "make", "makes"],
     answer: "made",
-    explanation: "「作られたピザ」→ 過去分詞（made）！",
+    explanation: "「作られたピザ」→ ピザは誰かに作られた（受け身）→ made！make の過去分詞。1語だけなので pizza の前に置くよ。",
   },
   {
     id: "pa03", level: "grade3", type: "multiple",
@@ -283,7 +289,7 @@ export const QUESTIONS = [
     sentence: "She read a book _____ in English.",
     options: ["written", "writing", "write", "writes"],
     answer: "written",
-    explanation: "「英語で書かれた本」→ write の過去分詞は written！",
+    explanation: "「英語で書かれた本」→ 本は書かれた（受け身）→ written！in English と続くので book の後ろに置くよ。",
   },
   {
     id: "post04", level: "grade3", type: "multiple",
@@ -291,7 +297,7 @@ export const QUESTIONS = [
     sentence: "The cake _____ by mom is very good.",
     options: ["made", "making", "make", "makes"],
     answer: "made",
-    explanation: "「お母さんが作ったケーキ」→ made！",
+    explanation: "「お母さんが作ったケーキ」→ ケーキは作られた（受け身）→ made！by mom と続くので後ろに置くよ。",
   },
   {
     id: "post05", level: "grade3", type: "multiple",
@@ -299,7 +305,7 @@ export const QUESTIONS = [
     sentence: "The pictures _____ by him are beautiful.",
     options: ["taken", "taking", "take", "takes"],
     answer: "taken",
-    explanation: "「彼が撮った写真」→ taken！",
+    explanation: "「彼が撮った写真」→ 写真は撮られた（受け身）→ taken！take の過去分詞。by him と続くので後ろに置くよ。",
   },
 
   // ============================
@@ -359,6 +365,7 @@ export const QUESTIONS = [
     sentence: "The new park is so _____. (excite)",
     answer: "exciting",
     hint: "公園（物）が主語 → -ing と -ed どっち？",
+    explanation: "公園（物・場所）が主語 → 「わくわくさせる側」→ exciting！人が主語なら excited（わくわくしている）になるよ。",
   },
   {
     id: "emo08", level: "grade3", type: "fill",
@@ -366,6 +373,7 @@ export const QUESTIONS = [
     sentence: "We were all _____ by the fireworks. (surprise)",
     answer: "surprised",
     hint: "「私たち（人）」が主語 → -ing と -ed どっち？",
+    explanation: "「私たち（人）」が主語 → 「びっくりした側」→ surprised！花火（物）が主語なら surprising（びっくりさせる）になるよ。",
   },
 
   // ============================
@@ -393,6 +401,7 @@ export const QUESTIONS = [
     sentence: "I know the girl _____ name is Yuki.",
     answer: "whose",
     hint: "「名前が Yuki の女の子」→「〜の」を表す関係詞は？",
+    explanation: "「名前がユキの女の子」→「〜の」という所有を表すときは whose！whose name = その子の名前。who は「〜が」、whose は「〜の」だよ。",
   },
   {
     id: "p2_wh04", level: "pre2", type: "multiple",
@@ -436,6 +445,7 @@ export const QUESTIONS = [
     sentence: "I want to go to the town _____ my friend lives.",
     answer: "where",
     hint: "「友達が住んでいる町」→「場所」のあとは where！",
+    explanation: "town は「場所」→「そこに友達が住んでいる」→ where！場所を説明するときは where、時を説明するときは when を使うよ。",
   },
   {
     id: "p2_wr04", level: "pre2", type: "multiple",
@@ -479,6 +489,7 @@ export const QUESTIONS = [
     sentence: "That was the year _____ I started playing tennis.",
     answer: "when",
     hint: "「時（year）」のあとは when！",
+    explanation: "year は「時」→「その年にテニスを始めた」→ when！場所なら where、時なら when だよ。",
   },
   {
     id: "p2_wn03", level: "pre2", type: "multiple",
@@ -522,6 +533,7 @@ export const QUESTIONS = [
     sentence: "_____ (not know) the way, he asked a woman.",
     answer: "Not knowing",
     hint: "「道を知らなかったので」→ 否定は Not を前に！",
+    explanation: "「道を知らなかったので」→ 分詞構文の否定は Not + -ing！主語（he）が自分で知らない → 能動なので Not knowing。",
   },
   {
     id: "p2_pc05", level: "pre2", type: "multiple",
