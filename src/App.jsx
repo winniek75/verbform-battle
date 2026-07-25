@@ -711,10 +711,19 @@ export default function App() {
       try {
         const correct = total - wrongs.length;
         const acc = Math.round((correct / total) * 100);
+        const tagFromCategory = (cat) => {
+          if (!cat) return 'other_grammar';
+          if (/関係代名詞|which.*that|who.*which|what.*that|コンマ/.test(cat)) return 'relative_pronoun';
+          if (/分詞|ing.*ed|with.*分詞/.test(cat)) return 'participle';
+          return 'other_grammar';
+        };
         window.WiseGame && window.WiseGame.reportComplete({
           score, maxScore: questions.length * 10, accuracy: acc,
           metadata: { level, maxCombo,
-            wrongAnswers: wrongs.slice(0, 20).map(w => ({ id: w.id, sentence: w.sentence })) }
+            wrongAnswers: wrongs.slice(0, 20).map(w => ({
+              q: w.sentence, correct: w.answer, chosen: w.yourAnswer,
+              tag: tagFromCategory(w.category)
+            })) }
         });
       } catch(e) {}
     }
