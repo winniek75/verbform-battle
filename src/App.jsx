@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { QUESTIONS, pickQuestions, LEVEL_INFO } from "./questions.js";
+import {
+  pickQuestions, LEVEL_INFO, UNITS, questionsForUnits,
+  isAnswerCorrect, acceptedAnswers, normalizeAnswer,
+} from "./questions.js";
 import IntroScreen from "./IntroScreen.jsx";
 
 // ── helpers ────────────────────────────────────────────────
@@ -86,6 +89,49 @@ function speakAnswer(text) {
     utter.rate = 0.9;
     window.speechSynthesis.speak(utter);
   } catch {}
+}
+
+const PORTAL_URL = "https://wise-english-portal.vercel.app";
+
+// ── URL パラメータ（ポータルからの直接起動） ────────────────
+//   ?level=grade3|pre2|all （grade=3 / grade=p2 でも可）
+//   ?unit=who,what …        （questions.js の UNITS のキー。カンマ区切りで複数可）
+//   ?count=1〜30            （問題数）
+//   ?mode=lesson            （導入レッスンを開く） / ?mode=menu（選んだ状態でメニューを開く）
+function readDeepLink() {
+  try {
+    const sp = new URLSearchParams(window.location.search);
+    const rawLevel = (sp.get("level") || sp.get("grade") || "").toLowerCase();
+    const LEVEL_ALIAS = {
+      grade3: "grade3", "3": "grade3", g3: "grade3",
+      pre2: "pre2", p2: "pre2", "pre-2": "pre2",
+      all: "all",
+    };
+    let level = LEVEL_ALIAS[rawLevel] || null;
+    const units = (sp.get("unit") || "")
+      .split(",").map(u => u.trim().toLowerCase()).filter(u => UNITS[u]);
+    const n = parseInt(sp.get("count"), 10);
+    const count = Number.isFinite(n) ? Math.max(1, Math.min(30, n)) : null;
+    const mode = (sp.get("mode") || "").toLowerCase();
+    if (!level && !units.length && !count && !mode) return null;
+    if (units.length && !level) {
+      const lv = new Set(questionsForUnits(units).map(q => q.level));
+      level = lv.size === 1 ? [...lv][0] : "all";
+    }
+    return { level, units, count, mode };
+  } catch { return null; }
+}
+
+// 読み上げ用：空所に正解を入れ、(sing) のような指示は読まない
+function fullSentence(q, ans) {
+  return q.sentence.replace("_____", ans).replace(/\s*\([a-z ]+\)/gi, "").replace(/\s+/g, " ").trim();
+}
+
+// 全問ノーミスのときのスコア（1問 100点 ＋ コンボボーナス 最大75点）
+function maxScoreFor(n) {
+  let s = 0;
+  for (let i = 0; i < n; i++) s += 100 + Math.min(i, 5) * 15;
+  return s;
 }
 
 const COMBO_MSGS = [
@@ -558,6 +604,25 @@ body {
 @keyframes milestoneAnim { 0%{opacity:0} 10%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
 @keyframes milestoneTextPop { 0%{transform:scale(0) rotate(-10deg);opacity:0} 30%{transform:scale(1.3) rotate(3deg);opacity:1} 50%{transform:scale(1) rotate(0)} 100%{transform:scale(.8) translateY(-30px);opacity:0} }
 
+.portal-link {
+  display: block; text-align: center; margin-top: 18px;
+  font-size: 0.8rem; font-weight: 700; color: #6b7280; text-decoration: none;
+}
+.portal-link:hover { color: #6366f1; text-decoration: underline; }
+.unit-note {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: #eef2ff; border: 1.5px solid #c7d2fe; border-radius: 12px;
+  padding: 10px 14px; margin-bottom: 14px;
+  font-size: 0.8rem; font-weight: 700; color: #3730a3; line-height: 1.6;
+}
+.unit-note button {
+  flex-shrink: 0; border: none; background: white; color: #6366f1;
+  border-radius: 99px; padding: 5px 12px; font-weight: 700; font-size: 0.72rem;
+  cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
+}
+.fill-note { font-size: 0.72rem; color: #6b7280; font-weight: 700; margin-top: 8px; line-height: 1.6; }
+.also-ok { font-size: 0.85em; font-weight: 700; }
+
 .adaptive-hint-vfb {
   background: linear-gradient(135deg, #ede9fe, #fce7f3);
   border-left: 3px solid #8b5cf6;
@@ -591,6 +656,7 @@ export default function App() {
   const [comboMilestone, setComboMilestone] = useState(null);
   const [recentResults, setRecentResults] = useState([]);
   const [showAdaptiveHint, setShowAdaptiveHint] = useState(false);
+  const [units, setUnits]       = useState([]);       // URL の ?unit= で指定された単元
   const inputRef = useRef(null);
 
   const COMBO_MILESTONES = { 3: "NICE! \u2728", 5: "GREAT! \uD83D\uDD25", 7: "AMAZING! \u26A1", 10: "UNSTOPPABLE! \uD83D\uDC8E" };
@@ -612,8 +678,11 @@ export default function App() {
   const q = questions[cur];
 
   // ─ start game ─────────────────────────────────────────────
-  const startGame = useCallback((lvl, cnt, customQs) => {
-    const qs = customQs ?? pickQuestions(lvl, cnt);
+  const startGame = useCallback((lvl, cnt, customQs, unitKeys = []) => {
+    const pool = unitKeys.length ? questionsForUnits(unitKeys) : null;
+    // 選択肢は毎回ならべかえる（正解がいつも同じ場所に出ないように）
+    const qs = (customQs ?? pickQuestions(lvl, cnt, pool))
+      .map(x => (x.options ? { ...x, options: shuffle(x.options) } : x));
     setQuestions(qs); setCur(0); setScore(0); setCombo(0);
     setMaxCombo(0); setSelected(null); setFill(""); setShown(false);
     setWrongs([]); setStreak([]); setTotal(0); setAnim(""); setToastMsg(null);
@@ -621,10 +690,24 @@ export default function App() {
     setScreen("drill");
   }, []);
 
+  // ─ URL パラメータで直接起動 ───────────────────────────────
+  useEffect(() => {
+    const dl = readDeepLink();
+    if (!dl) return;
+    const lvl = dl.level || "grade3";
+    const cnt = dl.count || 10;
+    setLevel(lvl); setQCount(cnt); setUnits(dl.units);
+    if (dl.mode === "menu") return;
+    if (dl.mode === "lesson" || dl.mode === "intro") { setScreen("intro"); return; }
+    startGame(lvl, cnt, undefined, dl.units);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ─ answer ─────────────────────────────────────────────────
-  const handleAnswer = useCallback((ans) => {
+  const handleAnswer = useCallback((rawAns) => {
     if (shown) return;
-    const ok = ans.trim().toLowerCase() === q.answer.trim().toLowerCase();
+    const ans = String(rawAns).trim().replace(/\s+/g, " ");
+    const ok = isAnswerCorrect(q, ans);
     setSelected(ans); setShown(true); setTotal(t => t + 1);
     if (ok) {
       playCorrectSound();
@@ -660,8 +743,11 @@ export default function App() {
       if (history.length > 200) history.splice(0, history.length - 200);
       saveLS(LS_KEYS.WRONG_HISTORY, history);
     }
-    // TTS: read the correct verb form after answering
-    setTimeout(() => speakAnswer(q.answer), 400);
+    // TTS: 正解を入れた文をまるごと読み上げる（別解で正解したときはその語で）
+    const spoken = ok
+      ? (acceptedAnswers(q).find(a => normalizeAnswer(a) === normalizeAnswer(ans)) ?? q.answer)
+      : q.answer;
+    setTimeout(() => speakAnswer(fullSentence(q, spoken)), 400);
   }, [shown, q, combo]);
 
   // ─ next ───────────────────────────────────────────────────
@@ -718,8 +804,8 @@ export default function App() {
           return 'other_grammar';
         };
         window.WiseGame && window.WiseGame.reportComplete({
-          score, maxScore: questions.length * 10, accuracy: acc,
-          metadata: { level, maxCombo,
+          score, maxScore: maxScoreFor(questions.length), accuracy: acc,
+          metadata: { level, maxCombo, ...(units.length ? { unit: units.join(",") } : {}),
             wrongAnswers: wrongs.slice(0, 20).map(w => ({
               q: w.sentence, correct: w.answer, chosen: w.yourAnswer,
               tag: tagFromCategory(w.category)
@@ -731,8 +817,14 @@ export default function App() {
   }, [screen]);
 
   const accuracy = total > 0 ? Math.round(((total - wrongs.length) / total) * 100) : 0;
-  const isCorrect = selected !== null &&
-    selected.trim().toLowerCase() === (q?.answer ?? "").trim().toLowerCase();
+  const isCorrect = selected !== null && isAnswerCorrect(q, selected);
+  // 画面に出す「正解」：別解で正解したときは、その子が入れた語をそのまま正解として見せる
+  const okList = q ? acceptedAnswers(q) : [];
+  const shownAnswer = isCorrect
+    ? (okList.find(a => normalizeAnswer(a) === normalizeAnswer(selected)) ?? q.answer)
+    : q?.answer;
+  const otherOk = okList.filter(a => a !== shownAnswer);
+  const unitLabel = units.map(u => UNITS[u].label).join("・");
 
   const rank = (() => {
     if (accuracy === 100) return { label: "S 🌟", bg: "#fef9c3", color: "#92400e", msg: "完璧！すごすぎる！！" };
@@ -755,7 +847,17 @@ export default function App() {
               <span className="logo-em">関係詞</span>＆<span className="logo-em">分詞</span><br />
               ドリルマスター 🎯
             </div>
-            <div className="home-sub">英検３級・準２級 文法 完全攻略</div>
+            <div className="home-sub">
+              who・which・what や -ing / -ed で「くわしく説明する文」を練習しよう<br />
+              （英検３級・準２級レベル／中学３年〜）
+            </div>
+
+            {units.length > 0 && (
+              <div className="unit-note">
+                <span>📌 今日の単元：{unitLabel}</span>
+                <button onClick={() => setUnits([])}>ぜんぶの単元にもどす</button>
+              </div>
+            )}
 
             <div className="card">
               <div className="clabel">📊 レベルを選んでね</div>
@@ -812,7 +914,8 @@ export default function App() {
             <div className="info-box">
               ⚠️ <b style={{color:"#ef4444"}}>ひっかけ問題</b>あり（what vs that など）<br />
               🔥 連続正解で <b style={{color:"#f59e0b"}}>コンボボーナス</b>！<br />
-              💪 間違えた問題は <b style={{color:"#10b981"}}>苦手だけ再ドリル</b> できる
+              💪 間違えた問題は <b style={{color:"#10b981"}}>苦手だけ再ドリル</b> できる<br />
+              ⏱ 時間制限なし。はじめての人は <b style={{color:"#6366f1"}}>導入レッスン → 5問</b> がおすすめ
             </div>
 
             <button
@@ -821,9 +924,10 @@ export default function App() {
             >
               📖 導入レッスンからはじめる！
             </button>
-            <button className="skip-btn" onClick={() => startGame(level, qCount)}>
-              いきなりゲームをはじめる →
+            <button className="skip-btn" onClick={() => startGame(level, qCount, undefined, units)}>
+              いきなりドリルをはじめる →
             </button>
+            <a className="portal-link" href={PORTAL_URL}>🏠 学習ホームにもどる</a>
           </div>
         </div>
       </>
@@ -839,7 +943,7 @@ export default function App() {
         <style>{CSS}</style>
         <div className="app">
           <div className="wrap">
-            <IntroScreen level={level} onStart={() => startGame(level, qCount)} />
+            <IntroScreen level={level} onStart={() => startGame(level, qCount, undefined, units)} />
           </div>
         </div>
       </>
@@ -875,7 +979,7 @@ export default function App() {
                 className="back-btn"
                 onClick={() => setScreen("home")}
               >
-                🏠 ホーム
+                ← メニュー
               </button>
               <div className="score-row">
                 <span>✅ <span className="num">{total - wrongs.length}</span></span>
@@ -912,7 +1016,7 @@ export default function App() {
                   <span key={i}>
                     {part}
                     {i < arr.length - 1 && (
-                      <span className="blank">{shown ? q.answer : "　　　"}</span>
+                      <span className="blank">{shown ? shownAnswer : "　　　"}</span>
                     )}
                   </span>
                 ))}
@@ -956,6 +1060,7 @@ export default function App() {
                       onChange={e => setFill(e.target.value)}
                       placeholder="ここに入力…"
                       disabled={shown}
+                      autoCapitalize="none" autoCorrect="off" autoComplete="off" spellCheck={false}
                     />
                     {!shown && (
                       <button className="sub-btn" disabled={!fill.trim()} onClick={() => handleAnswer(fill)}>
@@ -964,6 +1069,11 @@ export default function App() {
                     )}
                   </div>
                   {q.hint && <div className="hint">💡 {q.hint}</div>}
+                  {!shown && (
+                    <div className="fill-note">
+                      ✏️ 空いているところに入る英語だけを入力してね。大文字・小文字はどちらでもOK。
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -972,9 +1082,12 @@ export default function App() {
                 <div className={`exp ${isCorrect ? "ec" : "ew"}`}>
                   <div className="exp-hd">
                     {isCorrect
-                      ? <span className="exp-ok">✓ 正解！ <span className="exp-ans">{q.answer}</span></span>
-                      : <span className="exp-ng">✗ 不正解… 正解は <span className="exp-ans">{q.answer}</span></span>
+                      ? <span className="exp-ok">✓ 正解！ <span className="exp-ans">{shownAnswer}</span></span>
+                      : <span className="exp-ng">✗ 不正解… 正解は <span className="exp-ans">{shownAnswer}</span></span>
                     }
+                    {otherOk.length > 0 && (
+                      <span className={`also-ok ${isCorrect ? "exp-ok" : "exp-ng"}`}>（{otherOk.join(" / ")} でも正解）</span>
+                    )}
                   </div>
                   <div className="exp-body">
                     {q.explanation || `${q.sentence.replace("_____", q.answer)}`}
@@ -1096,7 +1209,7 @@ export default function App() {
                     <div key={i} className="wi">
                       <div className="wi-q">{w.sentence.replace("_____", `[${w.answer}]`)}</div>
                       <div className="wi-a">
-                        <span className="wc">正解: {w.answer}</span>
+                        <span className="wc">正解: {acceptedAnswers(w).join(" / ")}</span>
                         {" / "}
                         <span className="wy">あなた: {w.yourAnswer}</span>
                       </div>
@@ -1109,7 +1222,7 @@ export default function App() {
 
             {/* action buttons */}
             <div className="act-grid" style={{ marginTop: 14 }}>
-              <button className="a-btn a-retry" onClick={() => startGame(level, qCount)}>
+              <button className="a-btn a-retry" onClick={() => startGame(level, qCount, undefined, units)}>
                 🔄 もう一度
               </button>
               {wrongs.length > 0 ? (
@@ -1117,7 +1230,7 @@ export default function App() {
                   💪 苦手だけ
                 </button>
               ) : (
-                <button className="a-btn a-retry" onClick={() => startGame(level, qCount)}>
+                <button className="a-btn a-retry" onClick={() => startGame(level, qCount, undefined, units)}>
                   🎯 次のセット
                 </button>
               )}
@@ -1125,9 +1238,10 @@ export default function App() {
                 📖 導入レッスンを見る
               </button>
               <button className="a-btn a-home" onClick={() => setScreen("home")}>
-                🏠 ホームへ
+                🏠 メニューへ
               </button>
             </div>
+            <a className="portal-link" href={PORTAL_URL}>🏠 学習ホームにもどる</a>
           </div>
         </div>
       </>

@@ -1,5 +1,9 @@
 // ============================================================
-// 英検４級レベル 関係詞＆分詞 問題データベース
+// 英検３級・準２級レベル 関係詞＆分詞 問題データベース
+//
+// 入力問題（type: "fill"）で別解があるときは accept: ["who", "that"] のように
+// 正解をすべて登録する（answer は代表の正解。accept が無ければ answer だけが正解）。
+// 採点は isAnswerCorrect() で行う（大文字小文字・前後の空白・文末のピリオド等は無視）。
 // ============================================================
 
 export const QUESTIONS = [
@@ -43,8 +47,8 @@ export const QUESTIONS = [
     id: "who05", level: "grade3", type: "fill",
     category: "関係代名詞 who",
     sentence: "She is the woman _____ helped me.",
-    answer: "who",
-    hint: "「人（woman）」のあとに使う関係代名詞は？",
+    answer: "who", accept: ["who", "that"],
+    hint: "「人（woman）」のあとに使う関係代名詞は？（that も OK）",
     explanation: "woman は「人」→ 人の説明をするときは who を使うよ！「私を助けてくれた女性」という意味になる。that でもOK！",
   },
   {
@@ -87,9 +91,9 @@ export const QUESTIONS = [
     id: "wh03", level: "grade3", type: "fill",
     category: "関係代名詞 which",
     sentence: "I like the cake _____ my mom made.",
-    answer: "which",
+    answer: "which", accept: ["which", "that"],
     hint: "「物（cake）」のあとに使う関係代名詞は？（that も OK）",
-    explanation: "cake は「物」→ 物の説明をするときは which を使うよ！「お母さんが作ったケーキ」。that でもOK。目的格なので省略もできる！",
+    explanation: "cake は「物」→ 物の説明をするときは which を使うよ！「お母さんが作ったケーキ」。that でもOK。会話では which / that を言わずに省略することも多いよ（ここでは1語入れてね）。",
   },
   {
     id: "wh04", level: "grade3", type: "multiple",
@@ -155,9 +159,9 @@ export const QUESTIONS = [
     id: "wvw05", level: "grade3", type: "fill",
     category: "who か which か？（ひっかけ）", tricky: true,
     sentence: "I met a boy _____ can swim very fast.",
-    answer: "who",
+    answer: "who", accept: ["who", "that"],
     hint: "「boy」は人？ 物？ 人なら who、物なら which！",
-    explanation: "boy は「人」→ who！「すごく速く泳げる男の子に会った」という意味。人の説明は who、物・動物の説明は which だよ！",
+    explanation: "boy は「人」→ who！「すごく速く泳げる男の子に会った」という意味。人の説明は who、物・動物の説明は which だよ！（that でもOK）",
   },
 
   // ============================
@@ -167,7 +171,7 @@ export const QUESTIONS = [
     id: "wt01", level: "grade3", type: "multiple",
     category: "what か that か？（ひっかけ）", tricky: true,
     sentence: "This is _____ I want.",
-    options: ["what", "that", "which", "who"],
+    options: ["what", "that", "which", "it"],
     answer: "what",
     explanation: "what ＝「〜なもの」。前に名詞がないときは what！",
   },
@@ -175,7 +179,7 @@ export const QUESTIONS = [
     id: "wt02", level: "grade3", type: "multiple",
     category: "what か that か？（ひっかけ）", tricky: true,
     sentence: "I know _____ you like.",
-    options: ["what", "that", "which", "who"],
+    options: ["what", "that", "it", "when"],
     answer: "what",
     explanation: "「あなたが好きなもの」。前に名詞がないときは what！",
   },
@@ -191,7 +195,7 @@ export const QUESTIONS = [
     id: "wt04", level: "grade3", type: "multiple",
     category: "what か that か？（ひっかけ）", tricky: true,
     sentence: "Tell me _____ you want to eat.",
-    options: ["what", "that", "which", "it"],
+    options: ["what", "that", "it", "them"],
     answer: "what",
     explanation: "「食べたいもの」→ 前に名詞なし → what！",
   },
@@ -207,7 +211,7 @@ export const QUESTIONS = [
     id: "wt06", level: "grade3", type: "multiple",
     category: "what か that か？（ひっかけ）", tricky: true,
     sentence: "The dog _____ I like is very cute.",
-    options: ["that", "what", "which", "who"],
+    options: ["that", "what", "whose", "where"],
     answer: "that",
     explanation: "前に「the dog」があるから that！（which も OK）",
   },
@@ -278,10 +282,10 @@ export const QUESTIONS = [
   {
     id: "pa02", level: "grade3", type: "multiple",
     category: "過去分詞（〜された）",
-    sentence: "I ate the _____ pizza.",
-    options: ["made", "making", "make", "makes"],
-    answer: "made",
-    explanation: "「作られたピザ」→ ピザは誰かに作られた（受け身）→ made！make の過去分詞。1語だけなので pizza の前に置くよ。",
+    sentence: "She ate a _____ egg.",
+    options: ["boiled", "boiling", "boil", "boils"],
+    answer: "boiled",
+    explanation: "「ゆでたまご（ゆでられた卵）」→ 卵は誰かにゆでられた（受け身）→ boiled！boil の過去分詞。1語だけなので egg の前に置くよ。",
   },
   {
     id: "pa03", level: "grade3", type: "multiple",
@@ -443,9 +447,9 @@ export const QUESTIONS = [
     id: "p2_wr03", level: "pre2", type: "fill",
     category: "関係副詞 where（場所）",
     sentence: "I want to go to the town _____ my friend lives.",
-    answer: "where",
+    answer: "where", accept: ["where", "in which"],
     hint: "「友達が住んでいる町」→「場所」のあとは where！",
-    explanation: "town は「場所」→「そこに友達が住んでいる」→ where！場所を説明するときは where、時を説明するときは when を使うよ。",
+    explanation: "town は「場所」→「そこに友達が住んでいる」→ where！場所を説明するときは where、時を説明するときは when を使うよ。（かたい言い方の in which でも正解）",
   },
   {
     id: "p2_wr04", level: "pre2", type: "multiple",
@@ -469,7 +473,7 @@ export const QUESTIONS = [
     sentence: "The park _____ I run every morning is beautiful.",
     options: ["where", "which", "who", "when"],
     answer: "where",
-    explanation: "「I run in the park（公園で走る）」→ 前置詞なし → where！",
+    explanation: "もとの文は「I run in the park（公園で走る）」。空所のうしろに in が残っていない → 「そこで」の意味をふくむ where！",
   },
 
   // ============================
@@ -487,15 +491,15 @@ export const QUESTIONS = [
     id: "p2_wn02", level: "pre2", type: "fill",
     category: "関係副詞 when（時）",
     sentence: "That was the year _____ I started playing tennis.",
-    answer: "when",
+    answer: "when", accept: ["when", "that", "in which"],
     hint: "「時（year）」のあとは when！",
-    explanation: "year は「時」→「その年にテニスを始めた」→ when！場所なら where、時なら when だよ。",
+    explanation: "year は「時」→「その年にテニスを始めた」→ when！場所なら where、時なら when だよ。（that や in which でも正解）",
   },
   {
     id: "p2_wn03", level: "pre2", type: "multiple",
     category: "関係副詞 when（時）",
     sentence: "Do you remember the day _____ it snowed a lot?",
-    options: ["when", "where", "which", "that"],
+    options: ["when", "where", "which", "whose"],
     answer: "when",
     explanation: "「時（day）」のあとで「そのとき〜した」→ when！",
   },
@@ -663,6 +667,62 @@ export const QUESTIONS = [
 
 // ─── utils ───────────────────────────────────────────────────
 
+// ── 採点 ──────────────────────────────────────────────────
+// 大文字小文字・全角英字・前後や連続の空白・文末の句読点（. , ! ? 。）を無視して比べる
+export function normalizeAnswer(text) {
+  return String(text ?? "")
+    .normalize("NFKC")
+    .replace(/[\u2018\u2019]/g, "'")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/[\s.,!?。、]+$/u, "")
+    .trim();
+}
+
+// その問題で正解になる答えの一覧（代表の正解が先頭）
+export function acceptedAnswers(q) {
+  const list = [q.answer, ...(q.accept || [])];
+  const seen = new Set();
+  return list.filter((a) => {
+    const n = normalizeAnswer(a);
+    if (seen.has(n)) return false;
+    seen.add(n);
+    return true;
+  });
+}
+
+export function isAnswerCorrect(q, input) {
+  if (!q) return false;
+  const n = normalizeAnswer(input);
+  if (!n) return false;
+  return acceptedAnswers(q).some((a) => normalizeAnswer(a) === n);
+}
+
+// ── 単元（URL の ?unit= で指定できる） ─────────────────────
+// ids は問題 id の接頭辞
+export const UNITS = {
+  relative:   { label: "関係代名詞（who・which・that・what）", ids: ["who", "wh0", "wvw", "wt"] },
+  who:        { label: "関係代名詞 who", ids: ["who", "wvw"] },
+  which:      { label: "関係代名詞 which / that", ids: ["wh0", "wvw"] },
+  what:       { label: "what か that か", ids: ["wt"] },
+  participle: { label: "分詞（-ing / -ed）", ids: ["pp", "post", "pa", "emo"] },
+  "ing-ed":   { label: "exciting と excited（気持ちの -ing / -ed）", ids: ["emo"] },
+  whose:      { label: "関係代名詞 whose", ids: ["p2_wh"] },
+  where:      { label: "関係副詞 where", ids: ["p2_wr"] },
+  when:       { label: "関係副詞 when", ids: ["p2_wn"] },
+  kobun:      { label: "分詞構文", ids: ["p2_pc"] },
+  with:       { label: "with＋分詞", ids: ["p2_wi"] },
+  comma:      { label: "コンマつきの関係詞", ids: ["p2_nr"] },
+  mix:        { label: "準２級 総合問題", ids: ["p2_mix"] },
+};
+
+export function questionsForUnits(unitKeys) {
+  const prefixes = unitKeys.flatMap((k) => (UNITS[k] ? UNITS[k].ids : []));
+  if (!prefixes.length) return [];
+  return QUESTIONS.filter((q) => prefixes.some((p) => q.id.startsWith(p)));
+}
+
 export function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -672,10 +732,12 @@ export function shuffle(arr) {
   return a;
 }
 
-export function pickQuestions(level, count) {
-  let pool = level === "all"
-    ? QUESTIONS
-    : QUESTIONS.filter((q) => q.level === level);
+export function pickQuestions(level, count, customPool) {
+  let pool = customPool && customPool.length
+    ? customPool
+    : level === "all"
+      ? QUESTIONS
+      : QUESTIONS.filter((q) => q.level === level);
 
   const tricky = pool.filter((q) => q.tricky);
   const normal = pool.filter((q) => !q.tricky);
