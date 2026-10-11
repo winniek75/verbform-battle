@@ -630,6 +630,94 @@ body {
   font-size: 0.8rem; color: #7c3aed; font-weight: 700;
   animation: fadeSlide 0.3s ease;
 }
+
+/* ── Mobile optimization ──────────────────────────────── */
+@media (max-width: 640px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    font-size: 14px;
+  }
+  /* Prevent horizontal overflow */
+  .app { overflow-x: hidden; }
+  .wrap { padding: 14px 10px; }
+
+  /* Touch targets: all buttons min 44px */
+  button, a, [role="button"] { min-height: 44px; }
+
+  /* Prevent iOS zoom on inputs */
+  input, textarea, select { font-size: 16px !important; }
+  .fill-in { font-size: 16px !important; padding: 12px 14px; }
+
+  /* Level selection buttons */
+  .level-grid { gap: 8px; }
+  .lvl-btn { padding: 12px 6px; min-height: 80px; }
+  .lvl-icon { font-size: 1.4rem; }
+  .lvl-name { font-size: 0.85rem; }
+  .lvl-desc { font-size: 0.6rem; }
+
+  /* Count buttons */
+  .cnt-btn { padding: 10px 14px; min-height: 44px; }
+
+  /* Start buttons */
+  .start-btn { padding: 16px; font-size: 1.05rem; }
+  .skip-btn { padding: 12px; font-size: 0.82rem; min-height: 44px; }
+
+  /* Drill screen */
+  .qcard { padding: 16px; border-radius: 18px; }
+  .qtext { font-size: 1rem; margin-bottom: 16px; }
+
+  /* Answer options */
+  .opts { gap: 8px; }
+  .opt { padding: 14px 8px; font-size: 1rem; min-height: 48px; border-radius: 12px; }
+
+  /* Fill input row */
+  .fill-row { gap: 6px; }
+  .sub-btn { padding: 12px 16px; min-height: 48px; }
+
+  /* Next button */
+  .next-btn { padding: 14px; font-size: 0.95rem; }
+
+  /* Home logo */
+  .home-logo { font-size: clamp(1.4rem, 5vw, 2rem); }
+  .home-sub { font-size: 0.8rem; margin-bottom: 18px; }
+
+  /* Cards */
+  .card { padding: 16px; border-radius: 16px; margin-bottom: 12px; }
+  .info-box { padding: 12px 14px; font-size: 0.78rem; }
+
+  /* Back button */
+  .back-btn { padding: 6px 12px; font-size: 0.75rem; min-height: 36px; }
+
+  /* Result */
+  .result-card { padding: 24px 16px; border-radius: 20px; }
+  .big-score { font-size: 3.5rem; }
+  .result-title { font-size: 1.3rem; }
+  .stats-grid { gap: 8px; }
+  .stat-box { padding: 10px 6px; border-radius: 12px; }
+  .stat-val { font-size: 1.1rem; }
+
+  /* Action grid */
+  .act-grid { gap: 8px; margin-top: 12px; }
+  .a-btn { padding: 12px; font-size: 0.85rem; min-height: 48px; }
+
+  /* Wrong answers */
+  .wi { padding: 10px 12px; }
+  .wi-q { font-size: 0.82rem; }
+  .wi-a { font-size: 0.74rem; }
+
+  /* Explanation */
+  .exp { padding: 12px 14px; }
+
+  /* Toast */
+  .toast { font-size: 0.95rem; padding: 8px 18px; top: 60px; }
+
+  /* Combo milestone */
+  .combo-milestone-text { font-size: clamp(28px, 8vw, 48px); }
+}
 `;
 
 // ── component ───────────────────────────────────────────────

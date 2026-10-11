@@ -245,6 +245,27 @@ const CSS = `
 
 @keyframes ibob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
 @keyframes ifadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ── Mobile optimization for IntroScreen ─────────── */
+@media (max-width: 640px) {
+  .il .icard { padding: 14px; margin-bottom: 12px; box-shadow: 3px 3px 0 #1a1a2e; }
+  .il .icard h2 { font-size: 0.95rem; }
+  .il .icard p { font-size: 0.82rem; }
+  .il .italk { gap: 8px; padding: 10px; }
+  .il .italk-icon { font-size: 1.8rem; }
+  .il .italk-text { padding: 8px 10px; font-size: 0.8rem; }
+  .il .isbox { padding: 10px 12px; font-size: 0.85rem; }
+  .il .ichoices { gap: 6px; }
+  .il .ich { padding: 11px 6px; min-height: 44px; font-size: 0.88rem; }
+  .il .ivs { grid-template-columns: 1fr; gap: 8px; }
+  .il .ivs-box { font-size: 0.78rem; }
+  .il .iwchip { min-height: 36px; padding: 6px 10px; }
+  .il .ibcheck, .il .ibreset { min-height: 44px; }
+  .il .inbtn { padding: 12px 20px; min-height: 44px; font-size: 0.82rem; }
+  .il .idot { width: 38px; height: 38px; }
+  .il .ihome-grid { grid-template-columns: 1fr; gap: 8px; }
+  .il .ihcard { padding: 12px; min-height: 56px; }
+}
 `;
 
 // ── クイズ状態フック ─────────────────────────────────────────

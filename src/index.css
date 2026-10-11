@@ -43,3 +43,11 @@ html, body, #root {
   0%   { clip-path: inset(0 100% 0 0); }
   100% { clip-path: inset(0 0% 0 0); }
 }
+
+/* ── Mobile optimization (base) ──────────────────────── */
+@media (max-width: 640px) {
+  html, body {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}
